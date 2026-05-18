@@ -1,22 +1,21 @@
 module tt_um_PISO (
-    input  wire [7:0] ui_in,     // input pins
-    output wire [7:0] uo_out,    // output pins
-    input  wire [7:0] uio_in,    // bidir input
-    output wire [7:0] uio_out,   // bidir output
-    output wire [7:0] uio_oe,    // output enable
     input  wire clk,
-    input  wire rst_n
+    input  wire rst_n,
+    input  wire ena,
+    input  wire ui_in,
+    output wire uo_out
 );
 
-reg [7:0] counter;
+    // 8-bit shift register
+    reg [7:0] shift_reg;
 
-always @(posedge clk) begin
-    if (!rst_n)
-        counter <= 0;
-    else
-        counter <= counter + 1;
-end
+    always @(posedge clk) begin
+        if (!rst_n)
+            shift_reg <= 8'b0;
+        else if (ena)
+            shift_reg <= {shift_reg[6:0], ui_in};
+    end
 
-assign uo_out = counter;
+    assign uo_out = shift_reg[7];
 
 endmodule
