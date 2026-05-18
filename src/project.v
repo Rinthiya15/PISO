@@ -1,8 +1,3 @@
-/*
- * 8-bit Counter Example
- * SPDX-License-Identifier: Apache-2.0
- */
-
 `default_nettype none
 
 module tt_um_PISO (
@@ -18,22 +13,16 @@ module tt_um_PISO (
 
     reg [7:0] counter;
 
-    // Counter Logic
+    // Proper reset + counter
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
-            counter <= 8'b00000000;
+            counter <= 8'b0;
         else
             counter <= counter + 1'b1;
     end
 
-    // Output counter value
-    assign uo_out = counter;
-
-    // Unused bidirectional IOs
-    assign uio_out = 8'b00000000;
-    assign uio_oe  = 8'b00000000;
-
-    // Prevent warnings
-    wire _unused = &{ena, ui_in, uio_in, 1'b0};
+    assign uo_out  = counter;
+    assign uio_out = 8'b0;
+    assign uio_oe  = 8'b0;
 
 endmodule
