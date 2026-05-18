@@ -1,27 +1,14 @@
-`default_nettype none
-
-module tt_um_PISO (
-    input  wire [7:0] ui_in,
-    output wire [7:0] uo_out,
-    input  wire [7:0] uio_in,
-    output wire [7:0] uio_out,
-    output wire [7:0] uio_oe,
-    input  wire       ena,
-    input  wire       clk,
-    input  wire       rst_n
+module counter (
+    input wire clk,
+    input wire reset,
+    output reg [7:0] uo_out
 );
 
-    reg [7:0] counter = 8'b0;   // 🔥 MUST INIT
-
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            counter <= 8'b0;
-        else
-            counter <= counter + 1;
-    end
-
-    assign uo_out  = counter;
-    assign uio_out = 8'b0;
-    assign uio_oe  = 8'b0;
+always @(posedge clk) begin
+    if (!reset)
+        uo_out <= 8'd0;
+    else
+        uo_out <= uo_out + 1;
+end
 
 endmodule
