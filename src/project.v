@@ -1,3 +1,4 @@
+
 `default_nettype none
 
 module tt_um_PISO (
@@ -13,12 +14,11 @@ module tt_um_PISO (
 
     reg [7:0] counter;
 
-    // IMPORTANT RESET SAFE
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
             counter <= 8'd0;
         else
-            counter <= counter + 1;
+            counter <= counter + 1'b1;
     end
 
     assign uo_out  = counter;
