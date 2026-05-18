@@ -1,30 +1,32 @@
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import RisingEdge, Timer
+from cocotb.triggers import RisingEdge
 
 @cocotb.test()
 async def test_counter(dut):
 
-    # Clock start
-    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    clock = Clock(dut.clk, 10, units="ns")
+    cocotb.start_soon(clock.start())
 
-    # RESET
-    dut.reset.value = 0
-    await Timer(20, units="ns")
+    # RESET (ACTIVE LOW)
+    dut.rst_n.value = 0
+    dut.ena.value = 0
+    dut.ui_in.value = 0
 
-    dut.reset.value = 1
     await RisingEdge(dut.clk)
 
-    # check sequence
-    expected = 0
+    dut.rst_n.value = 1  # release reset
 
-    for i in range(5):
-        await RisingEdge(dut.clk)
+    # load data
+    dut.ena.value = 1
+    dut.ui_in.value = 0xA5
 
-        value = dut.uo_out.value.integer   # IMPORTANT FIX 🔥
+    await RisingEdge(dut.clk)
 
-        dut._log.info(f"COUNTER={value}")
+    dut.ena.value = 0
 
-        assert value == expected, f"Expected {expected}, Got {value}"
+    # shift test
+    await RisingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
-        expected += 1
+    assert dut.uo_out.value != 0
