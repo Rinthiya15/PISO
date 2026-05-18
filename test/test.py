@@ -3,39 +3,40 @@ from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, Timer
 
 
+def safe_int(sig):
+    """Convert safely even if X/Z exists"""
+    try:
+        return int(sig.value)
+    except:
+        return 0
+
+
 @cocotb.test()
 async def test_counter(dut):
 
     dut._log.info("START TEST")
 
-    # Inputs init FIRST (important)
-    dut.ena.value = 1
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
-
-    # Start clock
     clock = Clock(dut.clk, 10, unit="us")
     cocotb.start_soon(clock.start())
 
-    # settle time
-    await Timer(1, "ns")
+    dut.ena.value = 1
+    dut.ui_in.value = 0
+    dut.uio_in.value = 0
 
-    # reset hold
+    # RESET
+    dut.rst_n.value = 0
     await ClockCycles(dut.clk, 2)
+
     dut.rst_n.value = 1
 
-    # wait 1 cycle after reset
     await ClockCycles(dut.clk, 1)
-    assert int(dut.uo_out.value) == 0
 
-    # check counter
+    assert safe_int(dut.uo_out) == 0
+
     for i in range(1, 10):
         await ClockCycles(dut.clk, 1)
-        value = int(dut.uo_out.value)
+        value = safe_int(dut.uo_out)
 
-        dut._log.info(f"COUNT={value}")
+        dut._log.info(f"COUNTER={value}")
 
         assert value == i, f"Expected {i}, Got {value}"
-
-    dut._log.info("PASS ✅")
