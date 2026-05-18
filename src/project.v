@@ -11,14 +11,13 @@ module tt_um_PISO (
     input  wire       rst_n
 );
 
-    reg [7:0] counter;
+    reg [7:0] counter = 8'b0;   // 🔥 IMPORTANT INIT
 
-    // Proper reset + counter
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
             counter <= 8'b0;
         else
-            counter <= counter + 1'b1;
+            counter <= counter + 1;
     end
 
     assign uo_out  = counter;
