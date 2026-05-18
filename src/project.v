@@ -1,14 +1,22 @@
-module counter (
-    input wire clk,
-    input wire reset,
-    output reg [7:0] uo_out
+module tt_um_PISO (
+    input  wire [7:0] ui_in,     // input pins
+    output wire [7:0] uo_out,    // output pins
+    input  wire [7:0] uio_in,    // bidir input
+    output wire [7:0] uio_out,   // bidir output
+    output wire [7:0] uio_oe,    // output enable
+    input  wire clk,
+    input  wire rst_n
 );
 
+reg [7:0] counter;
+
 always @(posedge clk) begin
-    if (!reset)
-        uo_out <= 8'd0;
+    if (!rst_n)
+        counter <= 0;
     else
-        uo_out <= uo_out + 1;
+        counter <= counter + 1;
 end
+
+assign uo_out = counter;
 
 endmodule
