@@ -9,12 +9,21 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+This project is an 8-bit counter.  
+The counter increments by 1 on every clock cycle and outputs the value on `uo_out[7:0]`.
+
+---
 
 ## How to test
 
-Explain how to use your project
+1. Apply clock to `clk`
+2. Set `ena = 1`
+3. Reset using `rst_n = 0`
+4. Set `rst_n = 1`
+5. Observe counter output on `uo_out`
+
+---
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+Optional LEDs for viewing the counter output.
